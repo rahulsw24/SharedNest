@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import axios from "axios"
 
 export default function CreateNest() {
 
@@ -13,20 +14,39 @@ export default function CreateNest() {
     }
 
     const handleSubmit = async (e) => {
-        e.preventDefault();
-        const token = localStorage.getItem('accessToken');
+        e.preventDefault();  // Prevent default form submission
+
+        const token = localStorage.getItem('accessToken');  // Get JWT token from local storage
+
         try {
             const response = await axios.post('/api/nests/', formData, {
                 headers: {
-                    Authorization: `Bearer &{token}`,
+                    Authorization: `Bearer ${token}`,  // Include token in headers for authentication
                 },
             });
-            console.log(response.data)
-        }
-        catch (error) {
-            console.error("Error Registering user", error.response.data)
-        }
 
+            // Success handling
+            console.log(response.data);  // Log the successful response
+
+            setSuccessMessage("Nest created successfully!");  // Set a success message to display
+            setErrorMessage("");  // Clear any previous error messages
+        } catch (error) {
+            // Error handling
+            if (error.response) {
+                // If the server responds with an error
+                console.error("Error creating nest:", error.response.data);
+                setErrorMessage(error.response.data.message || "An error occurred while creating the nest.");
+            } else if (error.request) {
+                // If no response is received from the server
+                console.error("No response from the server:", error.request);
+                setErrorMessage("No response from the server. Please check your internet connection.");
+            } else {
+                // General error handling
+                console.error("Error:", error.message);
+                setErrorMessage(error.message || "An unexpected error occurred.");
+            }
+            setSuccessMessage("");  // Clear success message if there's an error
+        }
     };
 
     return (
