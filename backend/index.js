@@ -13,6 +13,7 @@ app.use(cors());
 app.use(express.json());
 app.use("/api/users", require("./routes/userRoutes"));
 app.use("/api/nests", require("./routes/nestRoutes"));
+app.use("/api/expenses", require("./routes/expenseRoutes"));
 
 const PORT = process.env.PORT || 3000;
 
