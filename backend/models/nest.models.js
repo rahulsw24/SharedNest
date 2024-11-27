@@ -11,6 +11,10 @@ const nestSchema = new mongoose.Schema(
       ref: "User",
     },
     members: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
+    totalExpenses: {
+      type: Number,
+      default: 0, // Default value when no expenses exist
+    },
   },
   { timestamps: true }
 );
