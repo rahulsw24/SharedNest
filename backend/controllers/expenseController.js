@@ -43,6 +43,7 @@ const addExpense = async (req, res) => {
 
     await expense.save();
     nest.totalExpenses += amount;
+    console.log(nest.totalExpenses);
     await nest.save();
 
     res.status(201).json({ message: "Expense added successfully.", expense });

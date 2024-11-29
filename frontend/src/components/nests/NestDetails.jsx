@@ -15,7 +15,7 @@ export default function NestDetails() {
                     throw new Error("Authentication token not found");
                 }
 
-                const response = await axios.get(`/api/nests/${nestId}`, {
+                const response = await axios.get(`/api/expenses/${nestId}`, {
                     headers: {
                         Authorization: `Bearer ${token}`,
                     },
