@@ -7,6 +7,7 @@ import Login from './components/Login'
 import Register from './components/Register'
 import { Route, Router, Routes } from 'react-router-dom'
 import Dashboard from './components/Dashboard'
+import NestDetails from './components/nests/NestDetails'
 
 
 function App() {
@@ -18,6 +19,7 @@ function App() {
       <Route path='/' element={<Login />} />
       <Route path='/register' element={<Register />} />
       <Route path='/dashboard' element={<Dashboard />} />
+      <Route path='/nests/:nestId' element={<NestDetails />} />
     </Routes>
   )
 }

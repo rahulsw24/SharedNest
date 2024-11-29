@@ -89,6 +89,8 @@ const getExpense = async (req, res) => {
   }
 };
 
+// @desc - delete an expense
+// DELETE /api/expenses/:nestId/:expenseId
 const deleteExpense = async (req, res) => {
   const { nestId, expenseId } = req.params;
 

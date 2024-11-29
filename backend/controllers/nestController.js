@@ -46,7 +46,30 @@ const getMyNests = asyncHandler(async (req, res) => {
   }
 });
 
+//@desc delete a nest
+//@ DELETE /api/nests/:nestId
+const deleteNest = asyncHandler(async (req, res) => {
+  const { nestId } = req.params;
+
+  if (!nestId) {
+    res.status(400);
+    throw new Error("Nest ID is required");
+  }
+  const nest = await Nest.findById(nestId);
+  if (!nest) {
+    res.status(404);
+    throw new Error("Nest cannot be found");
+  }
+  if (nest.head.toString() !== req.user.id) {
+    res.status(403);
+    throw new Error("You are not authorized to delete this nest");
+  }
+  await nest.deleteOne();
+  res.status(200).json({ message: "Nest deleted successfully" });
+});
+
 module.exports = {
   createNest,
   getMyNests,
+  deleteNest,
 };
