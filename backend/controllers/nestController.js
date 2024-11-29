@@ -46,6 +46,26 @@ const getMyNests = asyncHandler(async (req, res) => {
   }
 });
 
+// @desc - get details of nest by nestId
+// GET /api/nests/:nestId
+// Protected
+
+const getANest = asyncHandler(async (req, res) => {
+  const { nestId } = req.params;
+
+  if (!nestId) {
+    res.status(400);
+    throw new Error("Nest Id is required");
+  }
+
+  const nest = await Nest.findById(nestId);
+  if (!nest) {
+    res.status(404);
+    throw new Error("Nest Not Found");
+  }
+  res.status(200).json({ nest });
+});
+
 //@desc delete a nest
 //@ DELETE /api/nests/:nestId
 const deleteNest = asyncHandler(async (req, res) => {
@@ -72,4 +92,5 @@ module.exports = {
   createNest,
   getMyNests,
   deleteNest,
+  getANest,
 };

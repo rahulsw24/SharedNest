@@ -1,6 +1,7 @@
 const asyncHandler = require("express-async-handler");
 const Expense = require("../models/expenses.models");
 const Nest = require("../models/nest.models");
+
 const addExpense = async (req, res) => {
   const { nestId, amount, category, description } = req.body;
 
@@ -45,6 +46,8 @@ const addExpense = async (req, res) => {
     nest.totalExpenses += amount;
     console.log(nest.totalExpenses);
     await nest.save();
+
+    const te = nest.totalExpenses;
 
     res.status(201).json({ message: "Expense added successfully.", expense });
   } catch (err) {
