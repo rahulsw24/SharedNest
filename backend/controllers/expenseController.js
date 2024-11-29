@@ -43,13 +43,16 @@ const addExpense = async (req, res) => {
     // Save the expense to the database
 
     await expense.save();
-    nest.totalExpenses += amount;
+    nest.totalExpenses = parseFloat(nest.totalExpenses) || 0; // Default to 0 if it's NaN or not a valid number
+    nest.totalExpenses += parseFloat(amount);
     console.log(nest.totalExpenses);
     await nest.save();
 
     const te = nest.totalExpenses;
 
-    res.status(201).json({ message: "Expense added successfully.", expense });
+    res
+      .status(201)
+      .json({ message: "Expense added successfully.", expense, te });
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "Server error." });
@@ -111,9 +114,10 @@ const deleteExpense = async (req, res) => {
     // Update total expenses for the nest
     const nest = await Nest.findById(nestId);
     nest.totalExpenses -= expense.amount;
+    const newTe = nest.totalExpenses;
     await nest.save();
 
-    res.status(200).json({ message: "Expense deleted successfully" });
+    res.status(200).json({ message: "Expense deleted successfully", newTe });
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "Server error" });

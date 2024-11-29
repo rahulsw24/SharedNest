@@ -6,6 +6,7 @@ import AddExpense from "../expense/AddExpense";
 export default function NestDetails() {
     const { nestId } = useParams(); // Extract nestId from the URL
     const [nestData, setNestData] = useState(null);
+    const [expenseData, setExpenseData] = useState([])
     const [error, setError] = useState("");
     const [showForm, setShowForm] = useState(false);
     const [totalExpense, setTotalExpense] = useState(0);
@@ -31,6 +32,7 @@ export default function NestDetails() {
                     },
                 });
 
+
                 console.log(response.data.nest)
 
                 setNestData(response.data.nest);
@@ -46,6 +48,34 @@ export default function NestDetails() {
 
         fetchNestDetails();
     }, [nestId, totalExpense]);
+    useEffect(() => {
+        const fetchExpense = async () => {
+            try {
+                const token = localStorage.getItem("accessToken")
+                console.log(token)
+                const expenses = await axios.get(`/api/expenses/${nestId}`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    },
+                })
+                console.log(expenses.data.expenses)
+
+                if (Array.isArray(expenses.data.expenses)) {
+                    setExpenseData(expenses.data.expenses); // Set as array
+                } else {
+                    throw new Error("Invalid data format from API");
+                }
+            }
+            catch (err) {
+                console.error("Error Fetching Nest Details:", err);
+                setError(err.response?.data?.message || "Failed to fetch expense details");
+
+            }
+
+
+        }
+        fetchExpense();
+    }, [nestId, totalExpense])
     const handleAddExpense = async (amount, category, description) => {
 
         if (!amount || !category || !description) {
@@ -69,6 +99,20 @@ export default function NestDetails() {
                 },
             });
             console.log(response.data)
+            setNestData((prevNestData) => {
+                const newTotalExpense = prevNestData.totalExpense + Number(amount); // Add as number, not string
+                return {
+                    ...prevNestData,
+                    totalExpense: newTotalExpense, // Update total expense
+                };
+            });
+            setTotalExpense((prevData) => {
+                const newTotalExpense = prevData.totalExpense + Number(amount);
+                return {
+                    ...prevData,
+                    totalExpense: newTotalExpense
+                }
+            })
             // setTotalExpense((prevData) => setTotalExpense(...prevData + amount))
             setShowForm(false); // Hide the form after submission
             setError('');
@@ -92,7 +136,22 @@ export default function NestDetails() {
                 <div>
                     <h2>{nestData.name}</h2>
                     <p>Total Expenses: {nestData.totalExpenses || 0}</p>
-                    {/* Add logic to display expenses or other details */}
+                    {expenseData.length > 0 ? (
+                        <div className='my-5'>
+                            <ul>
+                                {
+                                    expenseData.map((expense) => (
+                                        <li key={expense._id}>
+
+                                            <p>{expense.amount}</p>
+
+                                        </li>
+                                    ))
+                                }
+                            </ul>
+                        </div>
+                    ) :
+                        (<p>No expenses in here till now</p>)}
                 </div>
             ) : (
                 <p>Loading Nest Details...</p>
@@ -105,7 +164,8 @@ export default function NestDetails() {
                     Add Expense
                 </button>
             )}
-            {/* Render the AddExpenseForm when the user clicks Add Expense */}
+            {/* Render the AddExpenseForm when the user clicks Add Expense */
+            }
             {showForm && (
                 <AddExpense
                     onAddExpense={handleAddExpense}

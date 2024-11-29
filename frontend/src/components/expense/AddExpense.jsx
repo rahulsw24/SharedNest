@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 
 
 export default function AddExpense({ onAddExpense, onCancel }) {
-    const [amount, setAmount] = useState('');
+    const [amount, setAmount] = useState(0);
     const [category, setCategory] = useState('');
     const [description, setDescription] = useState('');
 
