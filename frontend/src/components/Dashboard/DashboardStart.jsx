@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react'
 import CreateNest from '../CreateNest'
 import axios from "axios"
+import { useNavigate } from 'react-router-dom'
 
 export default function DashboardStart() {
+    const navigate = useNavigate();
     const [showNestForm, setShowNestForm] = useState(false)
     const [nest, getNest] = useState([])
     useEffect(() => {
@@ -35,7 +37,16 @@ export default function DashboardStart() {
 
         }
         fetchNests();
-    }, [])
+    }, [showNestForm])
+    const handleClick = (nestId) => {
+        if (nestId) {
+            navigate(`/nests/${nestId}`)
+        }
+        else {
+            console.error('Nest ID is undefined');
+        }
+
+    }
     return (
         <div class="p-4 sm:ml-64">
 
@@ -43,6 +54,7 @@ export default function DashboardStart() {
                 <div class="grid grid-cols-2 gap-4 mb-4">
                     {console.log(showNestForm)}
                     {!showNestForm && (<button onClick={() => setShowNestForm(true)}>
+
                         <div class="flex items-center justify-center h-24 rounded bg-gray-50 dark:bg-gray-800
                     hover:bg-zinc-800">
                             <p class="text-2xl text-gray-400 hover:text-white dark:text-gray-500">
@@ -53,7 +65,7 @@ export default function DashboardStart() {
                     {console.log(showNestForm)}
 
                     {showNestForm && (<CreateNest
-                        onCreateNest={showNestForm} />)}
+                        onCreateNest={setShowNestForm} />)}
 
 
                     <div class="flex items-center justify-center h-24 rounded bg-gray-50 dark:bg-gray-800
@@ -63,29 +75,36 @@ export default function DashboardStart() {
                         </p>
                     </div>
                 </div>
-                <div className='grid grid-cols-3 gap-4 mb-4'>
-                    {nest.length > 0 && nest.map((nest) => (
-                        <div
-                            key={nest._id}
-                            className="bg-white shadow-md rounded-md p-4 border border-gray-200"
-                        >
-                            <h2 className="text-xl font-semibold">{nest.name}</h2>
-                            <p>Total Expenses: {nest.totalExpenses}</p>
-                        </div>
-                    ))}
-                    {
-                        nest.length == 0 && (
-                            <h1>No Nest Found</h1>
-                        )
-                    }
-
-
-                </div>
-                {/* <div class="flex items-center justify-center h-48 mb-4 rounded bg-gray-50 dark:bg-gray-800">
-                    <p class="text-2xl text-gray-400 dark:text-gray-500">
-                        Existing Nests
+                <div class="flex items-center justify-center h-20 mb-4 rounded bg-gray-200 dark:bg-gray-800">
+                    <p class="text-2xl text-black dark:text-gray-500">
+                        Your Nests!
                     </p>
-                </div> */}
+                </div>
+                <div className='bg-slate-700 rounded-xl'>
+                    <div className='grid grid-cols-3 gap-4 mb-4 p-10'>
+
+                        {nest.length > 0 && nest.map((nest) => (
+                            <button key={nest._id} onClick={() => { handleClick(nest._id) }} className='hover:scale-110 transform-gpu transition ease-out'>
+                                <div
+                                    className="bg-white shadow-md rounded-md p-4 border border-gray-200"
+                                >
+                                    <h2 className="text-xl font-semibold">{nest.name}</h2>
+                                    <p>Total Expenses: {nest.totalExpenses}</p>
+                                </div>
+                            </button>
+                        ))}
+                        {
+                            nest.length == 0 && (
+                                <div className='content-center'>
+                                    <h1 className='text-white text-xl font-bold'>No Nest Found</h1>
+                                </div>
+                            )
+                        }
+
+
+                    </div>
+                </div>
+
                 <div class="grid grid-cols-2 gap-4 mb-4">
                     <div class="flex items-center justify-center rounded bg-gray-50 h-28 dark:bg-gray-800">
                         <p class="text-2xl text-gray-400 dark:text-gray-500">

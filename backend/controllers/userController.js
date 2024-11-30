@@ -71,8 +71,19 @@ const loginUser = asyncHandler(async (req, res) => {
     throw new Error("Email or password is not valid");
   }
 });
-
+//@desc - Get the detail of the logged in user!
+// GET - /api/users
+const getUser = asyncHandler(async (req, res) => {
+  const userId = req.user.id;
+  const user = await User.findById(userId);
+  if (!user) {
+    return res.status(404).json({ message: "User not found" });
+  } else {
+    res.status(200).json(user);
+  }
+});
 module.exports = {
   registerUser,
   loginUser,
+  getUser,
 };

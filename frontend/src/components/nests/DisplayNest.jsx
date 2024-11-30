@@ -59,7 +59,7 @@ export default function displayNests() {
                     <ul>
                         {
                             nest.map((nest) => (
-                                <li key={nest.id}>
+                                <li key={nest._id}>
                                     <button onClick={() => { handleClick(nest.id || nest._id) }}>
                                         {nest.name}
                                     </button>

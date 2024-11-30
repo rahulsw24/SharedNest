@@ -25,6 +25,8 @@ export default function CreateNest({ onCreateNest }) {
                 },
             });
 
+            onCreateNest(false);
+
             // Success handling
             console.log(response.data);  // Log the successful response
 
