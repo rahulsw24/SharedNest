@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import axios from "axios"
 
-export default function CreateNest() {
+export default function CreateNest({ onCreateNest }) {
 
     const [formData, setFormData] = useState({
         name: ""
@@ -51,11 +51,8 @@ export default function CreateNest() {
 
     return (
         <>
-            <div className='bg-gray-500 rounded-xl shadow-xl p-5'>
-                <h1 className='mb-4 text-4xl'>SharedNest</h1>
+            <div className='bg-white rounded-xl shadow-xl p-5'>
                 <p className='font-semibold mb-4'>Lets get you started</p>
-
-
                 <form class="max-w-sm mx-auto" onSubmit={handleSubmit}>
                     <div class="mb-5">
                         <label for="name" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Name Your Nest</label>
