@@ -1,6 +1,7 @@
 import axios from 'axios'
 import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom';
+import Header from '../Layout/Header';
 
 
 
@@ -48,6 +49,7 @@ export default function displayNests() {
         }
     }
     return (
+
         <div className='bg-emerald-300 rounded-xl mt-4'>
             <h1>Your Nests</h1>
             {console.log(nest)}

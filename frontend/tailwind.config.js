@@ -1,6 +1,10 @@
 /** @type {import('tailwindcss').Config} */
 export default {
-  content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
+  content: [
+    "./index.html",
+    "./src/**/*.{js,ts,jsx,tsx}",
+    "./node_modules/flowbite/**/*.js",
+  ],
   darkMode: "class",
   theme: {
     extend: {
@@ -56,6 +60,6 @@ export default {
         "Noto Color Emoji",
       ],
     },
-    plugins: [],
+    plugins: [require("flowbite/plugin")],
   },
 };
