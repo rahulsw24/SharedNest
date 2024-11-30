@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
-export default function Login() {
+export default function Login({ onSwitchToRegister }) {
     const [formData, setFormData] = useState({
         email: "",
         password: "",
@@ -39,8 +39,8 @@ export default function Login() {
 
     return (
         <>
-            <section className="bg-gray-50 dark:bg-gray-900">
-                <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
+            <section className="bg-gray-50 dark:bg-gray-900 rounded-2xl">
+                <div className="flex flex-col items-center justify-center px-6  mx-auto md:h-screen lg:py-0">
                     <a
                         href="#"
                         className="flex items-center mb-6 text-2xl font-semibold text-gray-900 dark:text-white"
@@ -145,12 +145,12 @@ export default function Login() {
                                 {/* Signup Redirect */}
                                 <p className="text-sm font-light text-gray-500 dark:text-gray-400">
                                     Don’t have an account yet?{" "}
-                                    <a
-                                        href="/register"
+                                    <button
+                                        onClick={onSwitchToRegister}
                                         className="font-medium text-primary-600 hover:underline dark:text-primary-500"
                                     >
                                         Sign up
-                                    </a>
+                                    </button>
                                 </p>
                             </form>
                         </div>

@@ -8,15 +8,17 @@ import Register from './components/Register'
 import { Route, Router, Routes } from 'react-router-dom'
 import Dashboard from './components/Dashboard'
 import NestDetails from './components/nests/NestDetails'
+import NestLayout from './components/nests/NestLayout'
+import LandingPage from './components/LandingPage/LandingPage'
 
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [count, setCount] = useState(0);
 
 
   return (
     <Routes>
-      <Route path='/' element={<Login />} />
+      <Route path='/' element={<LandingPage />} />
       <Route path='/register' element={<Register />} />
       <Route path='/dashboard' element={<Dashboard />} />
       <Route path='/nests/:nestId' element={<NestDetails />} />

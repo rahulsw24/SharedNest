@@ -3,6 +3,8 @@ import CreateNest from './CreateNest'
 import DisplayNest from './nests/DisplayNest'
 import axios from "axios"
 import Header from './Layout/Header'
+import DashboardStart from './Dashboard/DashboardStart'
+
 
 
 export default function Dashboard() {
@@ -48,7 +50,8 @@ export default function Dashboard() {
         <>
             <Header user={user} />
             {/* <CreateNest /> */}
-            <DisplayNest />
+            <DashboardStart />
+
 
         </>
 

@@ -1,8 +1,7 @@
 import React from 'react'
-import DashboardStart from '../Dashboard/DashboardStart'
 
 
-export default function Header({ user }) {
+export default function Layout({ user }) {
     return (
 
         <>
@@ -128,7 +127,7 @@ export default function Header({ user }) {
                 </div>
             </aside>
 
-            <DashboardStart />
+
 
 
 

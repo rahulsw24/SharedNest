@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import axios from 'axios'
 
-export default function Register() {
+export default function Register({ onSwitchToLogin }) {
 
     const [formData, setFormData] = useState({
         name: "",
@@ -45,9 +45,14 @@ export default function Register() {
             console.error("Error Registering user", error.response.data)
         }
     }
+    const [haveAccount, setHaveAccount] = useState(false)
+
+    const handleLogin = () => {
+
+    }
 
     return (
-        <section className="bg-gray-50 dark:bg-gray-900">
+        <section className="bg-gray-50 dark:bg-gray-900 rounded-2xl">
             <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
                 <a href="#" className="flex items-center mb-6 text-2xl font-semibold text-gray-900 dark:text-white">
                     <img className="w-8 h-8 mr-2" src="https://flowbite.s3.amazonaws.com/blocks/marketing-ui/logo.svg" alt="logo" />
@@ -106,7 +111,7 @@ export default function Register() {
 
                             {/* Login Link */}
                             <p className="text-sm font-light text-gray-500 dark:text-gray-400">
-                                Already have an account? <a href="#" className="font-medium text-primary-600 hover:underline dark:text-primary-500">Login here</a>
+                                Already have an account? <button onClick={onSwitchToLogin} className="font-medium text-primary-600 hover:underline dark:text-primary-500">Login here</button>
                             </p>
                         </form>
                     </div>
