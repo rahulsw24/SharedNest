@@ -5,23 +5,37 @@ import './App.css'
 import axios from "axios"
 import Login from './components/Login'
 import Register from './components/Register'
-import { Route, Router, Routes } from 'react-router-dom'
+import { Navigate, Route, Router, Routes } from 'react-router-dom'
 import Dashboard from './components/Dashboard'
 import NestDetails from './components/nests/NestDetails'
 import NestLayout from './components/nests/NestLayout'
 import LandingPage from './components/LandingPage/LandingPage'
+import NestPage from './components/nests/NestPage'
+import { useUser } from './userContext'
+
 
 
 function App() {
   const [count, setCount] = useState(0);
+  const { user, loading } = useUser();
+
+  if (loading) {
+    return <p>Loading...</p>; // Show a loader while fetching user data
+  }
 
 
   return (
     <Routes>
-      <Route path='/' element={<LandingPage />} />
-      <Route path='/register' element={<Register />} />
-      <Route path='/dashboard' element={<Dashboard />} />
-      <Route path='/nests/:nestId' element={<NestDetails />} />
+      <Route path="/" element={!user ? <LandingPage /> : <Navigate to="/dashboard" />} />
+      <Route path="/register" element={!user ? <Register /> : <Navigate to="/dashboard" />} />
+      <Route
+        path="/dashboard"
+        element={user ? <Dashboard user={user} /> : <Navigate to="/" />}
+      />
+      <Route
+        path="/nests/:nestId"
+        element={user ? <NestPage user={user} /> : <Navigate to="/" />}
+      />
     </Routes>
   )
 }
