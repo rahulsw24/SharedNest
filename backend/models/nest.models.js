@@ -15,6 +15,10 @@ const nestSchema = new mongoose.Schema(
       type: Number,
       default: 0, // Default value when no expenses exist
     },
+    inviteCode: {
+      type: String,
+      unique: true,
+    },
   },
   { timestamps: true }
 );

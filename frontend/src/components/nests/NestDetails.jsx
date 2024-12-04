@@ -128,6 +128,26 @@ export default function NestDetails() {
 
     }
     const [showExpenseForm, setShowExpenseForm] = useState(false)
+    const [inviteCode, setInviteCode] = useState("")
+    const [addMember, setAddMember] = useState(false);
+    const handleGenerateCode = async () => {
+        try {
+            const token = localStorage.getItem("accessToken");
+            const response = await axios.post(`/api/nests/${nestId}/generate-code`, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            })
+
+            setInviteCode(response.data.inviteCode)
+            console.log(inviteCode)
+        }
+        catch (err) {
+            console.error("error generating invite code")
+
+
+        }
+    }
     return (
         <>
 
@@ -141,7 +161,10 @@ export default function NestDetails() {
                             </p>
                         </div>
                         {!showExpenseForm && (
-                            <button onClick={() => { setShowExpenseForm(true) }}>
+                            <button onClick={() => {
+                                setShowExpenseForm(true)
+
+                            }}>
                                 <div class="flex items-center justify-center h-24 rounded bg-gray-50 dark:bg-gray-800
                     hover:bg-zinc-800">
                                     <p class="text-2xl text-gray-400 hover:text-white dark:text-gray-500">
@@ -157,6 +180,32 @@ export default function NestDetails() {
                                 />
                             )
                         }
+                    </div>
+                    <div class="grid grid-cols-2 gap-4 mb-4">
+                        <div>
+
+                        </div>
+                        {!addMember && (
+                            <button onClick={() => {
+                                setAddMember(true)
+                                handleGenerateCode()
+                            }}>
+                                <div className="flex items-center justify-center h-20 rounded bg-gray-50 dark:bg-gray-800
+                    hover:bg-zinc-800">
+
+                                    <p className="text-2xl text-gray-400 hover:text-white dark:text-gray-500">Add Member's</p>
+                                </div>
+                            </button>
+                        )}
+                        {addMember && (
+                            <div className="flex items-center justify-center h-20 rounded bg-gray-50 dark:bg-gray-800
+                    hover:bg-zinc-800">
+
+                                <p className="text-2xl text-gray-400 hover:text-white dark:text-gray-500">Invite Sent</p>
+                            </div>
+                        )}
+
+
                     </div>
                     {console.log(expenseData)}
                     <div class="flex items-center justify-center h-20 mb-4 rounded bg-gray-200 dark:bg-gray-800">
@@ -201,7 +250,7 @@ export default function NestDetails() {
                 </div>
 
             </div>
-            <div className="">
+            {/* <div className="">
                 <h1>Nest Details</h1>
                 {error && <p style={{ color: "red" }}>{error}</p>}
                 {nestData ? (
@@ -236,15 +285,15 @@ export default function NestDetails() {
                         Add Expense
                     </button>
                 )}
-                {/* Render the AddExpenseForm when the user clicks Add Expense */
-                }
+
+
                 {showForm && (
                     <AddExpense
                         onAddExpense={handleAddExpense}
                         onCancel={() => setShowForm(false)}
                     />
                 )}
-            </div>
+            </div> */}
 
         </>
 
