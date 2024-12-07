@@ -11,6 +11,17 @@ export default function NestDetails() {
     const [error, setError] = useState("");
     const [showForm, setShowForm] = useState(false);
     const [totalExpense, setTotalExpense] = useState(0);
+    const [copied, setCopied] = useState(false);
+    const handleCopy = () => {
+        navigator.clipboard.writeText(inviteCode) // Copy code to clipboard
+            .then(() => {
+                setCopied(true); // Set copied state to true
+                setTimeout(() => setCopied(false), 2000); // Reset after 2 seconds
+            })
+            .catch(err => {
+                console.error("Failed to copy: ", err);
+            });
+    };
     const [formData, setFormData] = useState({
         nestId: nestId,
         amount: 0,
@@ -138,9 +149,10 @@ export default function NestDetails() {
                     Authorization: `Bearer ${token}`
                 }
             })
+            console.log(response.data.inviteCode)
 
             setInviteCode(response.data.inviteCode)
-            console.log(inviteCode)
+
         }
         catch (err) {
             console.error("error generating invite code")
@@ -148,6 +160,21 @@ export default function NestDetails() {
 
         }
     }
+    const handleShare = () => {
+        if (navigator.share) {
+            navigator.share({
+                title: "Join My Nest",
+                text: "Use this code to join my nest:",
+                url: `https://yourdomain.com/join?inviteCode=${inviteCode}`,
+            })
+                .then(() => console.log("Shared successfully!"))
+                .catch(err => console.error("Failed to share: ", err));
+        } else {
+            alert("Sharing is not supported on this browser.");
+        }
+    };
+
+    console.log(inviteCode)
     return (
         <>
 
@@ -197,11 +224,29 @@ export default function NestDetails() {
                                 </div>
                             </button>
                         )}
-                        {addMember && (
-                            <div className="flex items-center justify-center h-20 rounded bg-gray-50 dark:bg-gray-800
-                    hover:bg-zinc-800">
-
-                                <p className="text-2xl text-gray-400 hover:text-white dark:text-gray-500">Invite Sent</p>
+                        {addMember && inviteCode && (
+                            <div className="flex flex-col items-center justify-center h-30 rounded bg-gray-50 dark:bg-gray-800 hover:bg-zinc-800 p-4">
+                                <p className="text-2xl text-black dark:text-white hover:text-white">Invite Code:</p>
+                                <p className="text-lg text-gray-700 dark:text-gray-300 font-bold">{inviteCode}</p>
+                                <button
+                                    className="mt-2 bg-emerald-500 text-white py-1 px-4 rounded-md hover:bg-emerald-600"
+                                    onClick={handleCopy}
+                                >
+                                    Copy Code
+                                </button>
+                                {copied && (
+                                    <p className="mt-2 text-green-500 font-medium">
+                                        Code copied!
+                                    </p>
+                                )}
+                                <div className="mt-4">
+                                    <button
+                                        className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
+                                        onClick={handleShare}
+                                    >
+                                        Share Link
+                                    </button>
+                                </div>
                             </div>
                         )}
 

@@ -49,9 +49,14 @@ const createNest = asyncHandler(async (req, res) => {
 //protected
 
 const getMyNests = asyncHandler(async (req, res) => {
-  const nests = await Nest.find({ head: req.user.id });
+  const userId = req.user.id;
 
-  if (nests) {
+  // Find nests where the user is either the head or a member
+  const nests = await Nest.find({
+    $or: [{ head: userId }, { members: userId }],
+  });
+
+  if (nests && nests.length > 0) {
     res.status(200).json(nests);
   } else {
     res.status(404);

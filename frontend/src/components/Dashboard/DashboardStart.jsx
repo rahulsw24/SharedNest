@@ -2,10 +2,13 @@ import React, { useEffect, useState } from 'react'
 import CreateNest from '../CreateNest'
 import axios from "axios"
 import { useNavigate } from 'react-router-dom'
+import JoinNest from '../joinNest'
+
 
 export default function DashboardStart() {
     const navigate = useNavigate();
     const [showNestForm, setShowNestForm] = useState(false)
+    const [showJoinForm, setShowJoinForm] = useState(false)
     const [nest, getNest] = useState([])
     useEffect(() => {
         const fetchNests = async () => {
@@ -67,14 +70,24 @@ export default function DashboardStart() {
                     {showNestForm && (<CreateNest
                         onCreateNest={setShowNestForm} />)}
 
-
-                    <div class="flex items-center justify-center h-50 rounded bg-gray-50 dark:bg-gray-800
+                    {!showJoinForm && (<button onClick={() => { setShowJoinForm(true) }}>
+                        <div class="flex items-center justify-center h-24 rounded bg-gray-50 dark:bg-gray-800
                     hover:bg-zinc-800">
-                        <p class="text-2xl text-gray-400 hover:text-white dark:text-gray-500">
-                            Join A Nest
-                        </p>
-                    </div>
+                            <p class="text-2xl text-gray-400 hover:text-white dark:text-gray-500">
+                                Join A Nest
+                            </p>
+                        </div>
+                    </button>
+                    )}
+                    {
+                        showJoinForm && (
+                            <JoinNest onJoinNest={setShowJoinForm} />
+                        )
+                    }
+                    {/* Success or Error Message */}
+
                 </div>
+
                 <div class="flex items-center justify-center h-20 mb-4 rounded bg-gray-200 dark:bg-gray-800">
                     <p class="text-2xl text-black dark:text-gray-500">
                         Your Nests!
