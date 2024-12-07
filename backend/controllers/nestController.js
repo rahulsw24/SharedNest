@@ -76,7 +76,7 @@ const getANest = asyncHandler(async (req, res) => {
     throw new Error("Nest Id is required");
   }
 
-  const nest = await Nest.findById(nestId);
+  const nest = await Nest.findById(nestId).populate("members", "name email");
   if (!nest) {
     res.status(404);
     throw new Error("Nest Not Found");

@@ -209,7 +209,23 @@ export default function NestDetails() {
                         }
                     </div>
                     <div class="grid grid-cols-2 gap-4 mb-4">
-                        <div>
+                        {/* Display members in the nest */}
+                        <div className="bg-slate-900 p-5 rounded-2xl">
+                            <h2 className="text-xl font-bold text-white dark:text-white">Members</h2>
+                            {nestData?.members && nestData.members.length > 0 ? (
+                                <ul className="mt-4 space-y-2">
+                                    {nestData.members.map((member) => (
+                                        <li
+                                            key={member._id}
+                                            className="flex items-center justify-center bg-gray-50 dark:bg-gray-800 p-3 rounded shadow"
+                                        >
+                                            <p className="text-gray-700 dark:text-white">{member.name || "Unknown"}</p>
+                                        </li>
+                                    ))}
+                                </ul>
+                            ) : (
+                                <p className="mt-4 text-gray-500">No members found in this nest.</p>
+                            )}
 
                         </div>
                         {!addMember && (
