@@ -233,7 +233,7 @@ export default function NestDetails() {
                                 setAddMember(true)
                                 handleGenerateCode()
                             }}>
-                                <div className="flex items-center justify-center h-20 rounded bg-gray-50 dark:bg-gray-800
+                                <div className="flex items-center justify-center h-36 rounded bg-gray-50 dark:bg-gray-800
                     hover:bg-zinc-800">
 
                                     <p className="text-2xl text-gray-400 hover:text-white dark:text-gray-500">Add Member's</p>
