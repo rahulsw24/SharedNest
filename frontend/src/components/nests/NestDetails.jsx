@@ -73,31 +73,62 @@ export default function NestDetails() {
     useEffect(() => {
         const fetchExpense = async () => {
             try {
-                const token = localStorage.getItem("accessToken")
-                console.log(token)
+                const token = localStorage.getItem("accessToken");
                 const expenses = await axios.get(`/api/expenses/${nestId}`, {
                     headers: {
-                        Authorization: `Bearer ${token}`
+                        Authorization: `Bearer ${token}`,
                     },
-                })
-                console.log(expenses.data.expenses)
+                });
 
                 if (Array.isArray(expenses.data.expenses)) {
-                    setExpenseData(expenses.data.expenses); // Set as array
+                    // Group expenses by month
+                    const groupedByMonth = expenses.data.expenses.reduce((acc, expense) => {
+                        const expenseDate = new Date(expense.date);
+                        // Get full month name and year
+                        const monthYear = expenseDate.toLocaleString('default', { month: 'long', year: 'numeric' }).toUpperCase(); // "DECEMBER 2024"
+
+                        if (!acc[monthYear]) {
+                            acc[monthYear] = { totalExpense: 0, expenses: [] };
+                        }
+
+                        acc[monthYear].totalExpense += expense.amount;
+                        acc[monthYear].expenses.push(expense);
+                        return acc;
+                    }, {});
+
+                    // Sort months: Current month first, then previous months
+                    const sortedGroupedByMonth = Object.entries(groupedByMonth)
+                        .sort(([monthYearA], [monthYearB]) => {
+                            // Get current month
+                            const currentMonth = new Date();
+                            const currentMonthYear = currentMonth.toLocaleString('default', { month: 'long', year: 'numeric' }).toUpperCase(); // "DECEMBER 2024"
+
+                            // Check if the monthYear is the current month
+                            if (monthYearA === currentMonthYear) return -1; // Move current month to the top
+                            if (monthYearB === currentMonthYear) return 1;
+
+                            // Otherwise, sort by date in descending order
+                            const dateA = new Date(monthYearA);
+                            const dateB = new Date(monthYearB);
+                            return dateB - dateA;
+                        })
+                        .reduce((acc, [monthYear, data]) => {
+                            acc[monthYear] = data;
+                            return acc;
+                        }, {});
+
+                    setExpenseData(sortedGroupedByMonth); // Set sorted data
                 } else {
                     throw new Error("Invalid data format from API");
                 }
+            } catch (err) {
+                console.error("Error Fetching Expenses:", err);
+                setError(err.response?.data?.message || "Failed to fetch expenses");
             }
-            catch (err) {
-                console.error("Error Fetching Nest Details:", err);
-                setError(err.response?.data?.message || "Failed to fetch expense details");
-
-            }
-
-
-        }
+        };
         fetchExpense();
-    }, [nestId, totalExpense])
+    }, [nestId, totalExpense]);
+
     const handleAddExpense = async (amount, category, description) => {
 
         if (!amount || !category || !description) {
@@ -323,38 +354,55 @@ export default function NestDetails() {
                             Your EXPENSES!
                         </p>
                     </div>
-                    <div className="my-5">
-                        {expenseData.length > 0 ? (
-                            <ul className="space-y-4">
-                                {expenseData.map((expense) => (
-                                    <li
-                                        key={expense._id}
-                                        className="flex justify-between bg-gray-50 dark:bg-gray-800 p-4 rounded shadow-md"
-                                    >
-                                        <div>
-                                            <p className="text-lg font-semibold text-gray-700 dark:text-white">
-                                                ₹{expense.amount}
-                                            </p>
-                                            <p className="text-sm text-gray-500">
-                                                Category: {expense.category}
-                                            </p>
-                                            <p className="text-sm text-gray-500">
-                                                Description: {expense.description}
-                                            </p>
-                                        </div>
-                                        <div className="text-right">
-                                            <p className="text-sm text-gray-500">
-                                                Added By: {expense.userId.name || "Unknown"}
-                                            </p>
-                                            <p className="text-xs text-gray-400">
-                                                Date: {new Date(expense.date).toLocaleDateString()}
-                                            </p>
-                                        </div>
-                                    </li>
-                                ))}
-                            </ul>
+                    <div className="my-6 space-y-6">
+                        {Object.keys(expenseData).length > 0 ? (
+                            Object.entries(expenseData).map(([monthYear, { totalExpense, expenses }]) => (
+                                <div
+                                    key={monthYear}
+                                    className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg"
+                                >
+                                    <h3 className="text-2xl font-semibold text-center text-gray-800 dark:text-white mb-4">
+                                        {monthYear}
+                                    </h3>
+                                    <div className="mb-4 text-center">
+                                        <p className="text-xl font-bold text-gray-700 dark:text-white">
+                                            Total Expense: ₹{totalExpense}
+                                        </p>
+                                    </div>
+                                    <ul className="space-y-4">
+                                        {expenses.map((expense) => (
+                                            <li
+                                                key={expense._id}
+                                                className="flex justify-between items-center bg-gray-100 dark:bg-gray-700 p-4 rounded-lg shadow-sm hover:shadow-md transition-all duration-300"
+                                            >
+                                                <div>
+                                                    <p className="text-lg font-semibold text-gray-700 dark:text-white">
+                                                        ₹{expense.amount}
+                                                    </p>
+                                                    <p className="text-sm text-gray-600 dark:text-gray-300">
+                                                        Category: {expense.category}
+                                                    </p>
+                                                    <p className="text-sm text-gray-600 dark:text-gray-300">
+                                                        Description: {expense.description}
+                                                    </p>
+                                                </div>
+                                                <div className="text-right">
+                                                    <p className="text-sm text-gray-600 dark:text-gray-300">
+                                                        Added By: {expense.userId.name || "Unknown"}
+                                                    </p>
+                                                    <p className="text-xs text-gray-500 dark:text-gray-400">
+                                                        Date: {new Date(expense.date).toLocaleDateString()}
+                                                    </p>
+                                                </div>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </div>
+                            ))
                         ) : (
-                            <p className="text-center text-gray-500">No expenses in here till now</p>
+                            <p className="text-center text-gray-500 dark:text-gray-400">
+                                No expenses for this nest yet
+                            </p>
                         )}
                     </div>
                 </div>

@@ -28,8 +28,8 @@ const nestSchema = new mongoose.Schema(
         },
         expenses: [
           {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: "Expense",
+            expense: { type: mongoose.Schema.Types.ObjectId, ref: "Expense" },
+            amount: Number,
           },
         ],
       },
