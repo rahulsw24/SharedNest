@@ -19,6 +19,21 @@ const nestSchema = new mongoose.Schema(
       type: String,
       unique: true,
     },
+    monthlyExpenses: [
+      {
+        month: String, // e.g., "2024-12"
+        totalAmount: {
+          type: Number,
+          default: 0,
+        },
+        expenses: [
+          {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Expense",
+          },
+        ],
+      },
+    ],
   },
   { timestamps: true }
 );

@@ -76,11 +76,22 @@ const getANest = asyncHandler(async (req, res) => {
     throw new Error("Nest Id is required");
   }
 
-  const nest = await Nest.findById(nestId).populate("members", "name email");
+  // Find the nest and populate the members and monthlyExpenses
+  const nest = await Nest.findById(nestId)
+    .populate("members", "name email") // Populate the members' name and email
+    .populate({
+      path: "monthlyExpenses.expenses", // Populate the expenses inside the monthlyExpenses
+      populate: {
+        path: "expense", // Assuming expense is populated by the expense model
+        select: "amount category description date", // Populate necessary fields of expense
+      },
+    });
+
   if (!nest) {
     res.status(404);
     throw new Error("Nest Not Found");
   }
+
   res.status(200).json({ nest });
 });
 

@@ -6,6 +6,10 @@ const expenseSchema = new mongoose.Schema({
     ref: "Nest",
     required: true,
   },
+  date: {
+    type: Date,
+    default: Date.now,
+  },
   userId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",

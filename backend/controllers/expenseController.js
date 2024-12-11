@@ -41,18 +41,40 @@ const addExpense = async (req, res) => {
     });
 
     // Save the expense to the database
-
     await expense.save();
+
+    // Update total expenses for the nest
     nest.totalExpenses = parseFloat(nest.totalExpenses) || 0; // Default to 0 if it's NaN or not a valid number
     nest.totalExpenses += parseFloat(amount);
-    console.log(nest.totalExpenses);
+
+    // Determine the current month (e.g., "2024-12")
+    const currentMonth = new Date().toISOString().slice(0, 7);
+
+    // Find the corresponding month in the nest's monthlyExpenses
+    let monthlyData = nest.monthlyExpenses.find(
+      (m) => m.month === currentMonth
+    );
+
+    if (monthlyData) {
+      // Update existing month's data
+      monthlyData.totalAmount += parseFloat(amount);
+      monthlyData.expenses.push(expense._id);
+    } else {
+      // Add a new month entry if it doesn't exist
+      nest.monthlyExpenses.push({
+        month: currentMonth,
+        totalAmount: parseFloat(amount),
+        expenses: [expense._id],
+      });
+    }
+
     await nest.save();
 
-    const te = nest.totalExpenses;
-
-    res
-      .status(201)
-      .json({ message: "Expense added successfully.", expense, te });
+    res.status(201).json({
+      message: "Expense added successfully.",
+      expense,
+      totalExpenses: nest.totalExpenses,
+    });
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "Server error." });
@@ -124,8 +146,36 @@ const deleteExpense = async (req, res) => {
   }
 };
 
+const getIndividualExpenses = async (req, res) => {
+  const { nestId } = req.params;
+  try {
+    // Assuming you have a database model to fetch expenses
+    const expenses = await Expense.find({ nestId }).populate("userId", "name");
+
+    // Process the expenses to group by user and calculate the total
+    const individualExpenses = expenses.reduce((acc, expense) => {
+      const userId = expense.userId._id.toString();
+      if (!acc[userId]) {
+        acc[userId] = {
+          userName: expense.userId.name,
+          totalExpense: 0,
+        };
+      }
+      acc[userId].totalExpense += expense.amount;
+      return acc;
+    }, {});
+
+    // Convert the object into an array to send as a response
+    res.json(Object.values(individualExpenses));
+  } catch (error) {
+    console.error("Error fetching individual expenses:", error);
+    res.status(500).json({ error: "Server error" });
+  }
+};
+
 module.exports = {
   addExpense,
   getExpense,
   deleteExpense,
+  getIndividualExpenses,
 };

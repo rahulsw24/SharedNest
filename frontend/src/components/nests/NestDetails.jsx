@@ -6,12 +6,23 @@ import Layout from "../Layout/Header";
 
 export default function NestDetails() {
     const { nestId } = useParams(); // Extract nestId from the URL
+    const [individualExpenses, setIndividualExpenses] = useState([]);
+    const [showExpenses, setShowExpenses] = useState(false);
     const [nestData, setNestData] = useState(null);
     const [expenseData, setExpenseData] = useState([])
     const [error, setError] = useState("");
     const [showForm, setShowForm] = useState(false);
     const [totalExpense, setTotalExpense] = useState(0);
     const [copied, setCopied] = useState(false);
+    const fetchIndividualExpenses = async () => {
+        try {
+            const response = await axios.get(`/api/expenses/individual-expenses/${nestId}`);
+            setIndividualExpenses(response.data);
+            setShowExpenses(true); // Show the expenses popup
+        } catch (error) {
+            console.error('Error fetching individual expenses:', error);
+        }
+    };
     const handleCopy = () => {
         navigator.clipboard.writeText(inviteCode) // Copy code to clipboard
             .then(() => {
@@ -208,6 +219,7 @@ export default function NestDetails() {
                             )
                         }
                     </div>
+
                     <div class="grid grid-cols-2 gap-4 mb-4">
                         {/* Display members in the nest */}
                         <div className="bg-slate-900 p-5 rounded-2xl">
@@ -267,6 +279,43 @@ export default function NestDetails() {
                         )}
 
 
+                    </div>
+                    <div class="grid grid-cols-2 gap-4 mb-4">
+                        <div></div>
+                        <div>
+                            <button
+                                onClick={fetchIndividualExpenses}
+                                className="px-4 py-2 bg-blue-500 text-white rounded-md shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                            >
+                                Member Totals
+                            </button>
+
+                            {showExpenses && (
+                                <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+                                    <div className="bg-white p-6 rounded-lg shadow-lg w-80 max-w-md">
+                                        <h3 className="text-xl font-semibold text-gray-800 mb-4">Member Expense Totals</h3>
+                                        <ul className="space-y-2">
+                                            {individualExpenses.length > 0 ? (
+                                                individualExpenses.map((expense) => (
+                                                    <li key={expense.userId} className="text-gray-600">
+                                                        <span className="font-semibold">{expense.userName}:</span> ₹{expense.totalExpense}
+                                                    </li>
+                                                ))
+                                            ) : (
+                                                <li className="text-gray-600">No expenses found for members.</li>
+                                            )}
+                                        </ul>
+                                        {/* Button to close the popup */}
+                                        <button
+                                            onClick={() => setShowExpenses(false)}
+                                            className="mt-4 px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 focus:outline-none"
+                                        >
+                                            Close
+                                        </button>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
                     </div>
                     {console.log(expenseData)}
                     <div class="flex items-center justify-center h-20 mb-4 rounded bg-gray-200 dark:bg-gray-800">
